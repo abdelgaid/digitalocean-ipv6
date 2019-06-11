@@ -26,7 +26,7 @@ sudo systemctl restart docker
 * Run docker image and test configuration:
 [source,sh]
 ----
-docker run -it alpine ash -c "ip -6 addr show dev eth0; ip -6 route show"
+docker run -p 80:80 kennethreitz/httpbin
 
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.GlobalIPv6Address}}{{end}}' <<CONTAINERID>>
 
@@ -40,6 +40,12 @@ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPv6Gateway}}{{end}}' <
 [source,sh]
 ----
 sudo sysctl net.ipv6.conf.eth0.proxy_ndp=1
+----
+
+* Enable your container IPv6 ip
+[source,sh]
+----
+ip -6 neigh add proxy 2001:db8::c009 dev eth0
 ----
 
 * To avoid access problems, disable firewall
