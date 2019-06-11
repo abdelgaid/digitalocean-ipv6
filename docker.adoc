@@ -1,10 +1,12 @@
-This is how to enable ipv6 for docker on DigitalOcean Ubuntu 18.04
+= Enable ipv6 for docker on DigitalOcean Ubuntu 18.04
 
 [Note]
 ====
 All details about below is here:
 https://docs.docker.com/v17.09/engine/userguide/networking/default_network/ipv6/#docker-ipv6-cluster
 ====
+
+== Confiugre docker to use IPv6
 
 * Open file /etc/docker/daemon.json and paste the following:
 [source,json]
@@ -18,7 +20,7 @@ https://docs.docker.com/v17.09/engine/userguide/networking/default_network/ipv6/
 * Restart docker
 [source,sh]
 ----
-systemctl restart docker
+sudo systemctl restart docker
 ----
 
 * Run docker image and test configuration:
@@ -32,8 +34,16 @@ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPv6Gateway}}{{end}}' <
 
 ----
 
+== Enable docker access from public internet
+
 * Run the following command to enable proxy (work around as DigitalOcean doesn't provide fully subnet)
 [source,sh]
 ----
 sudo sysctl net.ipv6.conf.eth0.proxy_ndp=1
+----
+
+* To avoid access problems, disable firewall
+[source,sh]
+----
+sudo ufw disable
 ----
