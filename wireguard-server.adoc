@@ -46,7 +46,14 @@ AllowedIPs = fd1b:64c4:4b59:c7e5::/64, 2001:db8::1/48
 To enable IPv6 forwarding to the INTERNET, edit file /etc/sysctl.conf
 [source]
 ----
-net.ipv6.conf.all.forwarding=1
+net.ipv6.conf.all.forwarding = 1
+----
+
+== Firewall Configuration
+Enable Wireguard port configured previously
+[source]
+----
+sudo ufw allow 5000
 ----
 
 == Test Server Installation
