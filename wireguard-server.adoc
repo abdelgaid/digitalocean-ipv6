@@ -1,0 +1,57 @@
+= Install Wireguard as VPN server (IPv6 Only) on Ubuntu 18.04
+
+[Note]
+====
+More detailed here:
+https://dnns.no/wireguard-vpn-on-ubuntu-18.04.html
+====
+
+== Install Wireguard
+[soruce]
+----
+sudo add-apt-repository ppa:wireguard/wireguard
+sudo apt-get install wireguard
+----
+
+== Generate Keys
+[soruce]
+----
+cd /etc/wireguard
+umask 077
+wg genkey | sudo tee privatekey | wg pubkey | sudo tee publickey
+----
+
+== Configuration
+Edit file /etc/wireguard/wg0.conf +
+
+Note that we use 2001:db8::1/48 block which may or may not be provided by your ISP.
+It is used to assign ::/64 block to your client.
+
+[source]
+----
+[Interface]
+PrivateKey = << Server Private Key >>
+Address = fd1b:64c4:4b59:c7e5::1/64, 2001:db8::1/48
+ListenPort = 5000
+# SaveConfig = true
+PostUp = ip6tables -A FORWARD -i wg0 -j ACCEPT; ip6tables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+PostDown = ip6tables -D FORWARD -i wg0 -j ACCEPT; ip6tables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+
+# Client
+[Peer]
+PublicKey = << Client Public Key >>
+AllowedIPs = fd1b:64c4:4b59:c7e5::/64, 2001:db8::1/48
+----
+
+To enable IPv6 forwarding to the INTERNET, edit file /etc/sysctl.conf
+[source]
+----
+net.ipv6.conf.all.forwarding=1
+----
+
+== Test Server Installation
+Connect a client to this server and try the following:
+[source]
+----
+ping -6 2001:db8::2 -c3
+----
