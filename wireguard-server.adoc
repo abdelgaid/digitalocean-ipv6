@@ -54,6 +54,10 @@ Enable Wireguard port configured previously
 [source]
 ----
 sudo ufw allow 5000
+
+# on system restart
+systemctl enable wg-quick@wg0
+
 ----
 
 == Test Server Installation
